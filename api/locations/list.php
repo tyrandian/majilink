@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../src/bootstrap.php';
 
 $parentId = isset($_GET['parent_id']) && $_GET['parent_id'] !== '' ? (int) $_GET['parent_id'] : null;
 $type = $_GET['type'] ?? null;
-$allowedTypes = ['county', 'constituency', 'ward', 'location', 'sub_location', 'village'];
+$allowedTypes = ['county', 'sub_county', 'constituency', 'ward', 'location', 'sub_location', 'village'];
 if ($type !== null && !in_array($type, $allowedTypes, true)) {
     json_response(['error' => 'Invalid administrative unit type'], 422);
 }
