@@ -111,6 +111,50 @@ function initLocationPicker(picker) {
     }));
 }
 
+function initCoordinatePicker(picker) {
+    if (typeof L === 'undefined') return;
+    const form = picker.closest('form');
+    const latitude = $('input[name="latitude"]', picker);
+    const longitude = $('input[name="longitude"]', picker);
+    const map = L.map($('.coordinate-map', picker), { zoomControl: true }).setView([-1.286389, 36.817223], 11);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+    let marker;
+
+    const setCoordinates = (lat, lng, zoom = 15) => {
+        latitude.value = Number(lat).toFixed(7);
+        longitude.value = Number(lng).toFixed(7);
+        if (marker) marker.setLatLng([lat, lng]);
+        else marker = L.marker([lat, lng], { draggable: true }).addTo(map).on('dragend', (event) => {
+            const position = event.target.getLatLng();
+            setCoordinates(position.lat, position.lng, map.getZoom());
+        });
+        map.setView([lat, lng], zoom);
+    };
+
+    map.on('click', (event) => setCoordinates(event.latlng.lat, event.latlng.lng));
+    [latitude, longitude].forEach((input) => input.addEventListener('change', () => {
+        const lat = Number(latitude.value);
+        const lng = Number(longitude.value);
+        if (Number.isFinite(lat) && Number.isFinite(lng)) setCoordinates(lat, lng);
+    }));
+    $('[data-use-location]', picker).addEventListener('click', () => {
+        if (!navigator.geolocation) {
+            showToast('Location services are not available in this browser.');
+            return;
+        }
+        navigator.geolocation.getCurrentPosition(
+            (position) => setCoordinates(position.coords.latitude, position.coords.longitude),
+            () => showToast('Location permission was not granted. You can click the map instead.'),
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    });
+    form.addEventListener('reset', () => window.setTimeout(() => {
+        if (marker) { marker.remove(); marker = null; }
+        map.setView([-1.286389, 36.817223], 11);
+    }, 0));
+    window.setTimeout(() => map.invalidateSize(), 100);
+}
+
 function statusBadge(status) {
     const label = (status || 'unknown').replace('_', ' ');
     return `<span class="status-badge status-${status}">${label}</span>`;
@@ -132,7 +176,7 @@ async function loadBoreholes() {
     if (!state.token) return;
     const list = $('#borehole-list');
     try {
-        const data = await api('/api/boreholes/list.php?county=Nairobi');
+        const data = await api(`/api/boreholes/list.php?county=${encodeURIComponent(state.user?.county || 'Nairobi')}`);
         state.boreholes = data.boreholes || [];
         renderBoreholes();
     } catch (error) {
@@ -153,7 +197,7 @@ function renderBoreholes() {
 async function loadVendors() {
     if (!state.token) return;
     try {
-        const data = await api('/api/vendors/list.php?county=Nairobi');
+        const data = await api(`/api/vendors/list.php?county=${encodeURIComponent(state.user?.county || 'Nairobi')}`);
         $('#vendor-list').innerHTML = data.vendors?.length ? data.vendors.map((vendor) => `<article class="directory-card"><div>${vendor.verified == 1 ? '<span class="status-badge status-working">Verified</span>' : '<span class="status-badge status-limited">Pending</span>'}</div><h3>${vendor.business_name}</h3><p>☎ ${vendor.phone}<br>Serving ${vendor.county} · ${vendor.service_radius_km} km radius</p><button class="text-button">Contact vendor →</button></article>`).join('') : '<div class="empty-state">No active vendors found in Nairobi.</div>';
     } catch (error) {
         $('#vendor-list').innerHTML = `<div class="empty-state">${error.message}</div>`;
@@ -165,20 +209,20 @@ async function loadDeliveries() {
     try {
         const data = await api('/api/deliveries/list.php');
         const rows = data.deliveries || [];
-        $('#delivery-list').innerHTML = rows.length ? rows.map((item) => `<tr><td><strong>#${item.id}</strong></td><td>${item.location_text}</td><td>${item.preferred_date}</td><td>${Number(item.litres).toLocaleString()} L</td><td>${statusBadge(item.status)}</td></tr>`).join('') : '<tr><td colspan="5" class="empty-cell">No delivery requests yet.</td></tr>';
+        $('#delivery-list').innerHTML = rows.length ? rows.map((item) => `<tr><td><strong>#${item.id}</strong></td><td>${item.location_text}</td><td>${item.preferred_date}</td><td>${item.updated_at ? new Date(item.updated_at).toLocaleDateString() : new Date(item.created_at).toLocaleDateString()}</td><td>${Number(item.litres).toLocaleString()} L</td><td>${statusBadge(item.status)}</td></tr>`).join('') : '<tr><td colspan="6" class="empty-cell">No delivery requests yet.</td></tr>';
     } catch (error) {
-        $('#delivery-list').innerHTML = `<tr><td colspan="5" class="empty-cell">${error.message}</td></tr>`;
+        $('#delivery-list').innerHTML = `<tr><td colspan="6" class="empty-cell">${error.message}</td></tr>`;
     }
 }
 
 async function loadOutages() {
     if (!state.token) return;
     try {
-        const data = await api('/api/outages/list.php?county=Nairobi');
+        const data = await api(`/api/outages/list.php?county=${encodeURIComponent(state.user?.county || 'Nairobi')}`);
         state.outages = data.outages || [];
         renderOutages();
     } catch (error) {
-        $('#outage-list').innerHTML = `<tr><td colspan="4" class="empty-cell">${error.message}</td></tr>`;
+        $('#outage-list').innerHTML = `<tr><td colspan="5" class="empty-cell">${error.message}</td></tr>`;
     }
 }
 
@@ -186,7 +230,7 @@ function renderOutages() {
     const query = ($('#outage-search')?.value || '').toLowerCase();
     const filter = $('#outage-filter')?.value || '';
     const items = state.outages.filter((item) => `${item.area} ${item.description}`.toLowerCase().includes(query) && (!filter || item.status === filter));
-    $('#outage-list').innerHTML = items.length ? items.map((item) => `<tr><td><strong>${item.area}</strong><br><small>${item.county}</small></td><td>${item.description}</td><td>${new Date(item.created_at).toLocaleDateString()}</td><td>${statusBadge(item.status)}</td></tr>`).join('') : '<tr><td colspan="4" class="empty-cell">No reports match this search.</td></tr>';
+    $('#outage-list').innerHTML = items.length ? items.map((item) => `<tr><td><strong>${item.area}</strong><br><small>${item.county}</small></td><td>${item.description}</td><td>${new Date(item.created_at).toLocaleDateString()}</td><td>${new Date(item.updated_at).toLocaleDateString()}</td><td>${statusBadge(item.status)}</td></tr>`).join('') : '<tr><td colspan="5" class="empty-cell">No reports match this search.</td></tr>';
 }
 
 function loadPrivateData() {
@@ -278,6 +322,7 @@ $('#register-form').addEventListener('submit', async (event) => {
 });
 $$('[data-api-form]').forEach((form) => form.addEventListener('submit', (event) => { event.preventDefault(); submitApiForm(form); }));
 $$('[data-location-picker]').forEach(initLocationPicker);
+$$('[data-coordinate-picker]').forEach(initCoordinatePicker);
 $('#borehole-search').addEventListener('input', renderBoreholes);
 $('#borehole-filter').addEventListener('change', renderBoreholes);
 $('#outage-search').addEventListener('input', renderOutages);

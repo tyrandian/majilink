@@ -23,6 +23,8 @@ All writes use JSON bodies and all responses are JSON. Roles are `resident`, `ve
 
 Visibility is scoped by role and administrative unit: admins can view every area; operators can view records in their assigned unit and descendants; vendors see delivery work in their county plus their assigned requests; residents see their own deliveries and public water/outage records in their area. Water-point creation is admin-only.
 
+Residents can see their complete delivery and outage history. Each case shows its current status, reported date, and last-updated date. Delivery statuses are `open`, `assigned`, `en_route`, `delivered`, or `cancelled`; outage statuses are `reported`, `under_review`, `confirmed`, `resolved`, or `rejected`.
+
 ## Endpoint map
 
 - Auth: `POST /api/auth/register.php`, `POST /api/auth/login.php`, `GET /api/auth/me.php`

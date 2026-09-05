@@ -24,3 +24,6 @@ ALTER TABLE boreholes ADD COLUMN administrative_unit_id BIGINT UNSIGNED NULL,
   ADD CONSTRAINT fk_boreholes_admin_unit FOREIGN KEY (administrative_unit_id) REFERENCES administrative_units(id) ON DELETE SET NULL;
 ALTER TABLE outage_reports ADD COLUMN administrative_unit_id BIGINT UNSIGNED NULL,
   ADD CONSTRAINT fk_outages_admin_unit FOREIGN KEY (administrative_unit_id) REFERENCES administrative_units(id) ON DELETE SET NULL;
+ALTER TABLE outage_reports ADD COLUMN latitude DECIMAL(10,7) NULL,
+  ADD COLUMN longitude DECIMAL(10,7) NULL;
+ALTER TABLE delivery_requests ADD COLUMN updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
