@@ -94,6 +94,16 @@ async function loadLocationOptions(select, parentId, type) {
 
 function initLocationPicker(picker) {
     const selects = $$('select[data-location-level]', picker);
+    selects.filter((select) => ['location', 'sub_location', 'village'].includes(select.dataset.locationLevel)).forEach((select) => {
+        const level = select.dataset.locationLevel;
+        const input = document.createElement('input');
+        input.name = level;
+        input.placeholder = `Enter ${level.replace('_', '-')}`;
+        input.dataset.manualLocation = level;
+        select.hidden = true;
+        select.disabled = true;
+        select.parentElement.appendChild(input);
+    });
     const county = $('select[data-location-level="county"]', picker);
     loadLocationOptions(county, null, 'county').catch(() => {});
     selects.forEach((select, index) => select.addEventListener('change', async () => {

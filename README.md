@@ -40,7 +40,7 @@ Residents can see their complete delivery and outage history. Each case shows it
 
 ## Administrative hierarchy
 
-Run `node database/export_npm_locations.mjs` followed by `php database/import_npm_locations.php` after the schema or migration. The npm package currently imports 47 counties, sub-counties, constituencies, wards, localities, and areas into `administrative_units`. The frontend forms use dependent selectors and persist `administrative_unit_id` alongside the existing text fields. Village data should be loaded from a verified `database/data/villages.csv` using the example template; village boundaries are not fabricated from incomplete public data.
+Run `node database/export_npm_locations.mjs` followed by `php database/import_npm_locations.php` after the schema or migration. The npm package currently imports 47 counties, sub-counties, constituencies, wards, localities, and areas into `administrative_units`. Frontend forms select county, constituency, and ward from the database, while location, sub-location, and village are entered manually by the user. Village data should be loaded from a verified `database/data/villages.csv` using the example template; village boundaries are not fabricated from incomplete public data.
 
 Seed users all use the password `password` for local testing. Replace seed credentials before deployment. This prototype still needs OTP verification, M-Pesa integration, geospatial indexing, audit logs, rate limiting, HTTPS, and county utility integrations.
 
