@@ -1,0 +1,54 @@
+{
+  "info": {
+    "name": "MajiLink API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Register resident",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Jane Resident\",\n  \"phone\": \"+254711111111\",\n  \"password\": \"password123\",\n  \"county\": \"Nairobi\"\n}" },
+        "url": "{{base_url}}/api/auth/register.php"
+      }
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"phone\": \"+254700000001\",\n  \"password\": \"password\"\n}" },
+        "url": "{{base_url}}/api/auth/login.php"
+      }
+    },
+    {
+      "name": "Current user",
+      "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{base_url}}/api/auth/me.php" }
+    },
+    {
+      "name": "List vendors",
+      "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{base_url}}/api/vendors/list.php?county=Nairobi" }
+    },
+    {
+      "name": "Create delivery",
+      "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"county\": \"Nairobi\",\n  \"location_text\": \"Kibera, Nairobi\",\n  \"litres\": 5000,\n  \"preferred_date\": \"2026-09-10\"\n}" }, "url": "{{base_url}}/api/deliveries/create.php" }
+    },
+    {
+      "name": "List boreholes",
+      "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{base_url}}/api/boreholes/list.php?county=Nairobi" }
+    },
+    {
+      "name": "Report outage",
+      "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"county\": \"Nairobi\",\n  \"area\": \"Kibera\",\n  \"description\": \"No water since yesterday.\"\n}" }, "url": "{{base_url}}/api/outages/create.php" }
+    },
+    {
+      "name": "List outages",
+      "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{base_url}}/api/outages/list.php?county=Nairobi" }
+    }
+  ]
+}
