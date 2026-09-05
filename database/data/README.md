@@ -1,6 +1,15 @@
 # Kenya administrative data
 
-`import_admin_data.php` imports:
+`import_npm_locations.php` imports the maintained `kenya-locations` npm package. It currently provides 47 counties, 307 sub-counties, 290 constituencies, 1,448 wards, 916 localities, and 1,829 areas.
+
+Regenerate and import the current npm dataset:
+
+```powershell
+node database/export_npm_locations.mjs
+php database/import_npm_locations.php
+```
+
+The older `import_admin_data.php` imports:
 
 - 47 counties, constituencies, and wards from `mbithuka/Counties` (`restructured_data.json`)
 - Available location and sub-location records from `kelvinsnir/Kenya-Counties-json` (`sublocation.json`)

@@ -3,7 +3,7 @@ USE majilink;
 CREATE TABLE IF NOT EXISTS administrative_units (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   parent_id BIGINT UNSIGNED NULL,
-  unit_type ENUM('county','constituency','ward','location','sub_location','village') NOT NULL,
+  unit_type ENUM('county','sub_county','constituency','ward','location','sub_location','village') NOT NULL,
   code VARCHAR(40) NULL,
   name VARCHAR(160) NOT NULL,
   source VARCHAR(120) NULL,
