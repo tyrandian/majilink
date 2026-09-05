@@ -240,6 +240,16 @@ function loadPrivateData() {
     loadOutages();
 }
 
+function addPaymentChoice() {
+    const form = $('[data-api-form="delivery"]');
+    if (!form || $('[name="payment_method"]', form)) return;
+    const label = document.createElement('label');
+    label.textContent = 'Payment';
+    label.innerHTML += '<select name="payment_method"><option value="on_delivery">Pay on delivery</option><option value="upfront">Pay upfront</option></select>';
+    const notes = $('[name="notes"]', form)?.closest('label');
+    if (notes) form.insertBefore(label, notes);
+}
+
 function activateView(view) {
     $$('.nav-item').forEach((item) => item.classList.toggle('active', item.dataset.view === view));
     $$('.view').forEach((item) => item.classList.toggle('active', item.id === `view-${view}`));
@@ -330,5 +340,6 @@ $('#outage-filter').addEventListener('change', renderOutages);
 $('#refresh-deliveries').addEventListener('click', loadDeliveries);
 
 renderUser();
+addPaymentChoice();
 checkApi();
 loadPrivateData();

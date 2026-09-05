@@ -6,6 +6,12 @@ INSERT INTO users (name, phone, email, password_hash, role, county) VALUES
 ('County Operator', '+254700000003', 'operator@example.test', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC5N5J4Vf8K5zC6dZ1a', 'operator', 'Nairobi'),
 ('MajiLink Admin', '+254700000004', 'admin@example.test', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC5N5J4Vf8K5zC6dZ1a', 'admin', 'Nairobi');
 
+INSERT INTO users (name, phone, email, password_hash, role, county) VALUES
+('Country Manager', '+254700000005', 'country.manager@example.test', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC5N5J4Vf8K5zC6dZ1a', 'country_manager', 'Nairobi'),
+('Nairobi County Manager', '+254700000006', 'county.manager@example.test', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC5N5J4Vf8K5zC6dZ1a', 'county_manager', 'Nairobi'),
+('Kasarani Constituency Manager', '+254700000007', 'constituency.manager@example.test', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC5N5J4Vf8K5zC6dZ1a', 'constituency_manager', 'Nairobi'),
+('Mwiki Ward Manager', '+254700000008', 'ward.manager@example.test', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC5N5J4Vf8K5zC6dZ1a', 'ward_manager', 'Nairobi');
+
 INSERT INTO vendors (user_id, business_name, phone, county, service_radius_km, verified) VALUES
 (2, 'Kijiji Water Co.', '+254700000002', 'Nairobi', 20, 1);
 

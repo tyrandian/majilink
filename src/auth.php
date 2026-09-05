@@ -84,6 +84,31 @@ function require_auth(PDO $pdo, array $roles = []): array
     return $user;
 }
 
+function manager_roles(): array
+{
+    return ['country_manager', 'county_manager', 'constituency_manager', 'ward_manager', 'admin'];
+}
+
+function require_manager(PDO $pdo): array
+{
+    return require_auth($pdo, manager_roles());
+}
+
+function manager_can_manage_unit(PDO $pdo, array $user, ?int $unitId): bool
+{
+    if ($user['role'] === 'admin' || $user['role'] === 'country_manager') return true;
+    if ($unitId === null || !($user['administrative_unit_id'] ?? null)) return false;
+    $query = $pdo->prepare(
+        'WITH RECURSIVE descendants AS (
+            SELECT id FROM administrative_units WHERE id = :scope_id
+            UNION ALL
+            SELECT child.id FROM administrative_units child JOIN descendants parent ON child.parent_id = parent.id
+        ) SELECT 1 FROM descendants WHERE id = :unit_id LIMIT 1'
+    );
+    $query->execute(['scope_id' => $user['administrative_unit_id'], 'unit_id' => $unitId]);
+    return (bool) $query->fetchColumn();
+}
+
 function issue_token(PDO $pdo, int $userId): string
 {
     $token = bin2hex(random_bytes(32));
