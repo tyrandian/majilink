@@ -1,60 +1,50 @@
-# MajiLink API prototype
+# MajiLink
 
-PHP 8 and MySQL 8 REST backend for water delivery, borehole discovery, and public outage reporting in Kenya.
+MajiLink is an API that connects communities in Kenya with reliable water. It supports water delivery requests, borehole discovery, and outage reporting in one system.
 
-## Quick start
+## Problem
 
-1. Run `database/schema.sql`, then `database/seeds.sql` in MySQL.
-	For an existing installation, run `database/migrations/001_administrative_hierarchy.sql` first.
-2. Copy `config/config.example.php` to `config/config.php` and set the database password and a long random `app_key`.
-3. Serve the public directory:
+Access to clean water is unpredictable in many parts of Kenya. People often do not know where the nearest working borehole is, how to request a water delivery, or how to report an outage so it gets fixed quickly. MajiLink brings these three needs into a single, simple API.
 
-```powershell
-php -S localhost:8000 -t public public/index.php
-```
+## Features
 
-4. Register at `POST /api/auth/register.php`, then send `Authorization: Bearer <token>`.
+- Water delivery requests: customers can request water delivery and track status
+- Borehole discovery: find nearby boreholes and check their status
+- Outage reporting: report an outage and follow up on repair progress
 
-Open `http://localhost:8000/` for the MajiLink web console. The frontend includes responsive views for the overview dashboard, borehole directory, delivery requests, outage reports, vendors, and account settings. It uses the same JSON API and stores the session token in browser local storage.
+## Tech stack
 
-For the local admin demo, run `database/seeds.sql` after creating the schema, then sign in with phone `+254700000004` and password `password`. If the account already existed before the seed was applied, rerun the seed or update that user's password before testing the demo login.
+- PHP
+- MySQL
+- REST API architecture
 
-All writes use JSON bodies and all responses are JSON. Roles are `resident`, `vendor`, `operator`, and `admin`.
+## Getting started
 
-Visibility is scoped by role and administrative unit: admins can view every area; operators can view records in their assigned unit and descendants; vendors see delivery work in their county plus their assigned requests; residents see their own deliveries and public water/outage records in their area. Water-point creation is admin-only.
+1. Clone the repository
+   ```
+   git clone https://github.com/tyrandian/majilink.git
+   ```
+2. Install dependencies (add your specific steps here, e.g. composer install)
+3. Set up your environment file with database credentials
+4. Run database migrations
+5. Start the local server
 
-Residents can see their complete delivery and outage history. Each case shows its current status, reported date, and last-updated date. Delivery statuses are `open`, `assigned`, `en_route`, `delivered`, or `cancelled`; outage statuses are `reported`, `under_review`, `confirmed`, `resolved`, or `rejected`.
+## API overview
 
-## Endpoint map
+Add a short table here once your endpoints are stable, for example:
 
-- Auth: `POST /api/auth/register.php`, `POST /api/auth/login.php`, `GET /api/auth/me.php`
-- Vendors: `GET /api/vendors/list.php`, `POST /api/vendors/create.php`, `PATCH /api/vendors/status.php`
-- Deliveries: `POST /api/deliveries/create.php`, `GET /api/deliveries/list.php`, `PATCH /api/deliveries/update-status.php`
-- Boreholes: `GET /api/boreholes/list.php`, `POST /api/boreholes/create.php`
-- Outages: `POST /api/outages/create.php`, `GET /api/outages/list.php`, `PATCH /api/outages/update-status.php`
-- Administrative locations: `GET /api/locations/list.php?type=county`, then pass `parent_id` to load constituencies, wards, locations, sub-locations, or villages.
-- Admin visibility management: `GET /api/users/list.php`, `PATCH /api/users/update-scope.php` with `user_id` and `administrative_unit_id`.
-- Managers: `GET /api/managers/list.php`, `POST /api/managers/create.php`; manager contacts are returned as phone/email fields.
-- Payments: `POST /api/payments/create.php` creates an upfront payment intent or an on-delivery record.
-- Water intelligence: `GET /api/coverage/list.php`, `GET /api/bills/list.php`, `POST /api/incidents/create.php`.
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | /api/deliveries | Create a water delivery request |
+| GET | /api/boreholes | List nearby boreholes |
+| POST | /api/outages | Report an outage |
 
-## Administrative hierarchy
+## Roadmap
 
-Run `node database/export_npm_locations.mjs` followed by `php database/import_npm_locations.php` after the schema or migration. The npm package currently imports 47 counties, sub-counties, constituencies, wards, localities, and areas into `administrative_units`. Frontend forms select county, constituency, and ward from the database, while location, sub-location, and village are entered manually by the user. Village data should be loaded from a verified `database/data/villages.csv` using the example template; village boundaries are not fabricated from incomplete public data.
+- Add user authentication
+- Add SMS notifications for delivery and outage updates
+- Add a public map view of borehole status
 
-Seed users all use the password `password` for local testing. Replace seed credentials before deployment. This prototype still needs OTP verification, M-Pesa integration, geospatial indexing, audit logs, rate limiting, HTTPS, and county utility integrations.
+## Author
 
-## Demo logins
-
-All seeded demo accounts use password `password`:
-
-- Admin: `+254700000004`
-- Country manager: `+254700000005`
-- County manager: `+254700000006`
-- Constituency manager: `+254700000007`
-- Ward manager: `+254700000008`
-- Vendor: `+254700000002`
-
-Payment selection is available on delivery requests as `on_delivery` or `upfront`. M-Pesa/card processing still requires provider credentials and webhook configuration.
-
-The management foundation also stores utilities, connected/total households, water sources, usage categories, bills, incidents such as dirty or poisonous water, and queued SMS/WhatsApp/email notifications. Actual delivery requires integrating an SMS provider, WhatsApp Business API, email transport, and M-Pesa/card webhooks.
+Built by Emmanuel Kibitok, IT professional and founder of Havana Technologies, Kenya.
