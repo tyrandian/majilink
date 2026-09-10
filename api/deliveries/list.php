@@ -1,5 +1,7 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/../../src/http.php';
+require_http_method(['GET']);
 require_once __DIR__ . '/../../src/bootstrap.php';
 $user = require_auth($pdo);
 $sql = 'SELECT d.*, v.business_name AS vendor_name FROM delivery_requests d LEFT JOIN vendors v ON v.id = d.vendor_id';
