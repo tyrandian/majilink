@@ -1,5 +1,7 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/../../src/http.php';
+require_http_method(['POST']);
 require_once __DIR__ . '/../../src/bootstrap.php';
 $admin = require_auth($pdo, ['admin', 'country_manager']);
 $data = request_json();

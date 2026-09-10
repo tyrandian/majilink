@@ -17,16 +17,17 @@ function request_json(): array
     }
 
     try {
-        $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+        $object = json_decode($body, false, 512, JSON_THROW_ON_ERROR);
     } catch (JsonException) {
         json_response(['error' => 'Request body must contain valid JSON'], 400);
     }
 
-    if (!is_array($data)) {
+    if (!$object instanceof stdClass) {
         json_response(['error' => 'JSON body must be an object'], 400);
     }
 
-    return $data;
+    // Preserve associative arrays for nested values used by existing handlers.
+    return json_decode($body, true, 512, JSON_THROW_ON_ERROR);
 }
 
 function require_fields(array $data, array $fields): void

@@ -31,6 +31,9 @@ Access to clean water is unpredictable in many parts of Kenya. People often do n
 
 ## API overview
 
+See [HTTP request conventions](docs/http-api.md) for supported methods, input
+validation, and instructions for running the regression tests with `npm test`.
+
 Add a short table here once your endpoints are stable, for example:
 
 | Method | Endpoint | Description |

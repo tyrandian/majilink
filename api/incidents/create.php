@@ -1,5 +1,7 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/../../src/http.php';
+require_http_method(['POST']);
 require_once __DIR__ . '/../../src/bootstrap.php';
 $user = require_auth($pdo, ['resident', 'operator', 'admin', 'country_manager', 'county_manager', 'constituency_manager', 'ward_manager']);
 $data = request_json();

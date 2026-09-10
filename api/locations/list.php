@@ -1,5 +1,7 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/../../src/http.php';
+require_http_method(['GET']);
 require_once __DIR__ . '/../../src/bootstrap.php';
 
 $parentId = isset($_GET['parent_id']) && $_GET['parent_id'] !== '' ? (int) $_GET['parent_id'] : null;

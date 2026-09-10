@@ -14,13 +14,4 @@ require_once __DIR__ . '/response.php';
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/auth.php';
 
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: Authorization, Content-Type');
-header('Access-Control-Allow-Methods: GET, POST, PATCH, OPTIONS');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(204);
-    exit;
-}
-
 $pdo = db($config);
